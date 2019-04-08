@@ -1,0 +1,28 @@
+{
+    "name": "luffluo/laravel-orm-support",
+    "description": "Extend Laravel ORM",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "luffluo",
+            "email": "luffluo@outlook.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "laravel/framework": "5.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Luffluo\\LaravelOrmSupport\\": "src"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["Luffluo\\LaravelOrmSupport\\ServiceProvider"]
+        }
+    }
+}
