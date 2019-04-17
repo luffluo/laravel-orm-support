@@ -120,7 +120,7 @@ trait MonthlyScale
      */
     public function newQueryForPeriod($start, $end = null)
     {
-        $start = to_carbon($start);
+        $start = to_carbon($start)->startOfDay();
 
         if ($end) {
             $end = to_carbon($end);
@@ -129,7 +129,7 @@ trait MonthlyScale
         }
 
         if ($end < $start) {
-            throw new InvalidArgumentException('$start can\'t less then $end');
+            throw new InvalidArgumentException('$start(' . $start . ') can\'t less then' . ' $end(' . $end . ')');
         }
 
         $query = $this->newQuery()->from($this->getTableForYearMonth($start->copy()->format('Ym')));
