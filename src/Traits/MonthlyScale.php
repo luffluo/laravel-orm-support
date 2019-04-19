@@ -27,6 +27,16 @@ trait MonthlyScale
     }
 
     /**
+     * 获取 table 属性设置的表名
+     *
+     * @return mixed
+     */
+    public function getShortTable()
+    {
+        return $this->table;
+    }
+
+    /**
      * 获取昨天的表名
      *
      * @return string

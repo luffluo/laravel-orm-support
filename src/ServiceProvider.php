@@ -3,7 +3,8 @@
 namespace Luffluo\LaravelOrmSupport;
 
 use Illuminate\Support\Arr;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -23,7 +24,7 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerQueryBuilderMacros()
     {
-        Builder::macro('unionSelect', function ($columns = ['*']) {
+        QueryBuilder::macro('unionSelect', function ($columns = ['*']) {
 
             /* @var \Illuminate\Database\Query\Builder $this */
 
@@ -40,7 +41,7 @@ class ServiceProvider extends BaseServiceProvider
             return $this;
         });
 
-        Builder::macro('unionSelectRaw', function ($expression, array $bindings = []) {
+        QueryBuilder::macro('unionSelectRaw', function ($expression, array $bindings = []) {
 
             /* @var \Illuminate\Database\Query\Builder $this */
 
@@ -58,19 +59,19 @@ class ServiceProvider extends BaseServiceProvider
         /**
          * 给所有的 union 添加 where
          */
-        Builder::macro('unionWhere',
+        EloquentBuilder::macro('unionWhere',
             function ($column, $operator = null, $value = null, $boolean = 'and') {
 
-                /* @var \Illuminate\Database\Query\Builder $this */
+                /* @var \Illuminate\Database\Eloquent\Builder $this */
 
                 $this->where($column, $operator, $value, $boolean);
 
-                if ($this->unions) {
-                    foreach ($this->unions as $union) {
+                if ($this->query->unions) {
+                    foreach ($this->query->unions as $union) {
                         $union['query']->where($column, $operator, $value, $boolean);
                     }
 
-                    $this->addBinding(Arr::last($this->wheres)['value'] ?? null, 'union');
+                    $this->query->addBinding(Arr::last($this->query->wheres)['value'] ?? null, 'union');
                 }
 
                 return $this;
@@ -79,18 +80,18 @@ class ServiceProvider extends BaseServiceProvider
         /**
          * 给所有的 union 添加 where
          */
-        Builder::macro('unionOrWhere', function ($column, $operator = null, $value = null) {
+        EloquentBuilder::macro('unionOrWhere', function ($column, $operator = null, $value = null) {
 
-            /* @var \Illuminate\Database\Query\Builder $this */
+            /* @var \Illuminate\Database\Eloquent\Builder $this */
 
             $this->orWhere($column, $operator, $value);
 
-            if ($this->unions) {
-                foreach ($this->unions as $union) {
+            if ($this->query->unions) {
+                foreach ($this->query->unions as $union) {
                     $union['query']->orWhere($column, $operator, $value);
                 }
 
-                $this->addBinding(Arr::last($this->wheres)['value'] ?? null, 'union');
+                $this->query->addBinding(Arr::last($this->query->wheres)['value'] ?? null, 'union');
             }
 
             return $this;
@@ -99,7 +100,7 @@ class ServiceProvider extends BaseServiceProvider
         /**
          * 给所有的 union 添加 where
          */
-        Builder::macro('unionWhereIn',
+        QueryBuilder::macro('unionWhereIn',
             function ($column, $values, $boolean = 'and', $not = false) {
 
                 /* @var \Illuminate\Database\Query\Builder $this */
@@ -122,7 +123,7 @@ class ServiceProvider extends BaseServiceProvider
         /**
          * 给所有的 union 添加 where
          */
-        Builder::macro('unionWhereBetween',
+        QueryBuilder::macro('unionWhereBetween',
             function ($column, array $values, $boolean = 'and', $not = false) {
 
                 /* @var \Illuminate\Database\Query\Builder $this */
@@ -143,14 +144,14 @@ class ServiceProvider extends BaseServiceProvider
         /**
          * 给所有的 unions 添加 group by
          */
-        Builder::macro('unionGroupBy', function (...$groups) {
+        QueryBuilder::macro('unionGroupBy', function (...$groups) {
 
-            /* @var \Illuminate\Database\Query\Builder $this */
+            /* @var \Illuminate\Database\Eloquent\Builder $this */
 
             $this->groupBy($groups);
 
-            if ($this->unions) {
-                foreach ($this->unions as $union) {
+            if ($this->query->unions) {
+                foreach ($this->query->unions as $union) {
                     $union['query']->groupBy($groups);
                 }
             }

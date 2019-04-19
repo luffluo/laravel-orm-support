@@ -31,3 +31,21 @@ if (! function_exists('to_carbon')) {
         return $datetime instanceof \Illuminate\Support\Carbon ? $datetime : \Illuminate\Support\Carbon::parse($datetime);
     }
 }
+
+if (!function_exists('object_to_array')) {
+    /**
+     * PHP 对象转数组.
+     *
+     * @param $obj
+     *
+     * @return array
+     */
+    function object_to_array($obj)
+    {
+        if (empty($obj)) {
+            return (array) $obj;
+        }
+
+        return json_decode(json_encode($obj), true);
+    }
+}
