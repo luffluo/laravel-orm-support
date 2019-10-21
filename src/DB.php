@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Luffluo\LaravelOrmSupport;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB as LaravelDB;
 
 /**
@@ -144,7 +145,7 @@ class DB
      * @param string|null $like 待过滤的表名
      * @return array
      */
-    public function getTables(string $like = null): array
+    public function getTables(string $like = null, $excepts = null): array
     {
         $tables = $this->getConnection()
             ->select(LaravelDB::raw('show tables'));
@@ -154,6 +155,21 @@ class DB
         if ($like) {
             $tables = $tables->filter(function ($item) use ($like) {
                 return Str::contains($item, $like);
+            });
+        }
+
+        if ($excepts) {
+            $excepts = Arr::wrap($excepts);
+
+            $tables = $tables->filter(function ($item) use ($excepts) {
+
+                foreach ($excepts as $except) {
+                    if (Str::contains($item, $except)) {
+                        return false;
+                    }
+                }
+
+                return true;
             });
         }
 

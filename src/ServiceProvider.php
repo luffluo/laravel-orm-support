@@ -66,12 +66,12 @@ class ServiceProvider extends BaseServiceProvider
 
                 $this->where($column, $operator, $value, $boolean);
 
-                if ($this->query->unions) {
-                    foreach ($this->query->unions as $union) {
+                if ($this->unions) {
+                    foreach ($this->unions as $union) {
                         $union['query']->where($column, $operator, $value, $boolean);
                     }
 
-                    $this->query->addBinding(Arr::last($this->query->wheres)['value'] ?? null, 'union');
+                    $this->addBinding(Arr::last($this->wheres)['value'] ?? null, 'union');
                 }
 
                 return $this;
@@ -86,12 +86,12 @@ class ServiceProvider extends BaseServiceProvider
 
             $this->orWhere($column, $operator, $value);
 
-            if ($this->query->unions) {
-                foreach ($this->query->unions as $union) {
+            if ($this->unions) {
+                foreach ($this->unions as $union) {
                     $union['query']->orWhere($column, $operator, $value);
                 }
 
-                $this->query->addBinding(Arr::last($this->query->wheres)['value'] ?? null, 'union');
+                $this->addBinding(Arr::last($this->wheres)['value'] ?? null, 'union');
             }
 
             return $this;
@@ -150,8 +150,8 @@ class ServiceProvider extends BaseServiceProvider
 
             $this->groupBy($groups);
 
-            if ($this->query->unions) {
-                foreach ($this->query->unions as $union) {
+            if ($this->unions) {
+                foreach ($this->unions as $union) {
                     $union['query']->groupBy($groups);
                 }
             }

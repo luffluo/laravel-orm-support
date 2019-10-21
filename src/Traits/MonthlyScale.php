@@ -3,16 +3,11 @@
 namespace Luffluo\LaravelOrmSupport\Traits;
 
 use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
 use Luffluo\LaravelOrmSupport\Exceptions\InvalidArgumentException;
 
 /**
  * 按月分表
- *
- * @property \App\Models\Model $model
- *
  * Trait MonthlyScale
- * @package App\Models\Traits
  */
 trait MonthlyScale
 {
@@ -43,7 +38,7 @@ trait MonthlyScale
      */
     public function getTableForYesterday()
     {
-        return $this->handleRawTable() . today()->subDay();
+        return $this->handleRawTable() . today()->subDay()->format('Ym');
     }
 
     /**
@@ -60,7 +55,6 @@ trait MonthlyScale
      * 获取上几个月的表名
      *
      * @param int $months
-     *
      * @return string
      */
     public function getTableForLastMonths(int $months)
@@ -71,12 +65,13 @@ trait MonthlyScale
     /**
      * 通过特定的年月获取表名
      *
-     * @param string $yearMonth
-     *
+     * @param \DateTime|string $yearMonth
      * @return string
      */
     public function getTableForYearMonth($yearMonth)
     {
+        $yearMonth = to_carbon($yearMonth)->format('Ym');
+
         return $this->handleRawTable() . $yearMonth;
     }
 
@@ -103,6 +98,7 @@ trait MonthlyScale
     /**
      * 获取 上周 查询的 query
      *
+     * @param int $weeks
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public function newQueryForLastWeek(int $weeks = 1)
@@ -112,20 +108,31 @@ trait MonthlyScale
 
     /**
      * 获取 上几周 查询的 query
-     *
+     * @param int $weeks
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public function newQueryForLastWeeks(int $weeks)
     {
-        return $this->newQueryForPeriod(today()->subWeeks($weeks)->startOfWeek(), today()->subWeeks($weeks)->endOfWeek());
+        return $this->newQueryForPeriod(today()->subWeeks($weeks)->startOfWeek(),
+            today()->subWeeks($weeks)->endOfWeek());
+    }
+
+    /**
+     * 获取某个月的 query
+     *
+     * @param \DateTime|string $yearMonth
+     * @return @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
+     */
+    public function newQueryForYearMonth($yearMonth)
+    {
+        return $this->newQuery()->from($this->getTableForYearMonth($yearMonth));
     }
 
     /**
      * 通过某个时间段，获取 query
      *
-     * @param Carbon|string|int      $start
-     * @param Carbon|string|int|null $end
-     *
+     * @param \DateTime|string|int $start
+     * @param \DateTime|string|int|null $end
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public function newQueryForPeriod($start, $end = null)
@@ -148,7 +155,7 @@ trait MonthlyScale
             return $query;
         }
 
-        while (! $end->isSameMonth($start->addMonth(), true)) {
+        while (!$end->isSameMonth($start->addMonth(), true)) {
             $query->unionAll($this->newQuery()->from($this->getTableForYearMonth($start->copy()->format('Ym'))));
         }
 
@@ -170,6 +177,7 @@ trait MonthlyScale
     /**
      * 获取 上周 查询的 query
      *
+     * @param int $weeks
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public static function queryForLastWeek(int $weeks = 1)
@@ -180,6 +188,7 @@ trait MonthlyScale
     /**
      * 获取 上几周 查询的 query
      *
+     * @param int $weeks
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public static function queryForLastWeeks(int $weeks)
@@ -190,13 +199,23 @@ trait MonthlyScale
     /**
      * 通过某个时间段，获取 query
      *
-     * @param Carbon|string|int      $start
-     * @param Carbon|string|int|null $end
-     *
+     * @param \DateTime|string|int $start
+     * @param \DateTime|string|int|null $end
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public static function queryForPeriod($start, $end = null)
     {
         return (new static)->newQueryForPeriod($start, $end);
+    }
+
+    /**
+     * 获取某个月的 query
+     *
+     * @param \DateTime|string $yearMonth
+     * @return @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
+     */
+    public static function queryForYearMonth($yearMonth)
+    {
+        return (new static)->newQueryForYearMonth($yearMonth);
     }
 }

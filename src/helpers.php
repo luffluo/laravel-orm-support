@@ -28,7 +28,7 @@ if (! function_exists('to_carbon')) {
             }
         }
 
-        return $datetime instanceof \Illuminate\Support\Carbon ? $datetime : \Illuminate\Support\Carbon::parse($datetime);
+        return $datetime instanceof \DateTime ? $datetime : \Illuminate\Support\Carbon::parse($datetime);
     }
 }
 
