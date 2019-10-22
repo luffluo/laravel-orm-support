@@ -66,12 +66,23 @@ class ServiceProvider extends BaseServiceProvider
 
                 $this->where($column, $operator, $value, $boolean);
 
-                if ($this->unions) {
-                    foreach ($this->unions as $union) {
-                        $union['query']->where($column, $operator, $value, $boolean);
-                    }
+                if ($this instanceof \Illuminate\Database\Eloquent\Builder) {
 
-                    $this->addBinding(Arr::last($this->wheres)['value'] ?? null, 'union');
+                    if ($this->getQuery()->unions) {
+                        foreach ($this->getQuery()->unions as $union) {
+                            $union['query']->where($column, $operator, $value, $boolean);
+                        }
+
+                        $this->addBinding(Arr::last($this->getQuery()->wheres)['value'] ?? null, 'union');
+                    }
+                } else {
+                    if ($this->unions) {
+                        foreach ($this->unions as $union) {
+                            $union['query']->where($column, $operator, $value, $boolean);
+                        }
+
+                        $this->addBinding(Arr::last($this->wheres)['value'] ?? null, 'union');
+                    }
                 }
 
                 return $this;
