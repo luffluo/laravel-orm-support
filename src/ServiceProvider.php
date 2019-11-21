@@ -17,6 +17,39 @@ class ServiceProvider extends BaseServiceProvider
     public function register()
     {
         $this->registerQueryBuilderMacros();
+
+        $this->registerEloquentBuilderMacros();
+    }
+
+    /**
+     * 给 \Illuminate\Database\Eloquent\Builder 注册新方法
+     */
+    public function registerEloquentBuilderMacros()
+    {
+        /**
+         * 让分页的时候不要用 count(*) 去统计总数
+         * 用 countColumns 的字段去统计
+         *
+         * @param int $perPage 每页数量
+         * @param string $countColumns 用于统计总数的列
+         * @param array $columns 返回的列
+         * @param string $pageName 页数字段名称
+         * @param int|null $page 页数
+         */
+        EloquentBuilder::macro('countColumnPaginate', function ($perPage = null, $countColumns = 'id', $columns = ['*'], $pageName = 'page', $page = null) {
+            $page = $page ?: \Illuminate\Pagination\Paginator::resolveCurrentPage($pageName);
+
+            $perPage = $perPage ?: $this->model->getPerPage();
+
+            $results = ($total = $this->toBase()->getCountForPagination(\Illuminate\Support\Arr::wrap($countColumns)))
+                ? $this->forPage($page, $perPage)->get($columns)
+                : $this->model->newCollection();
+
+            return $this->paginator($results, $total, $perPage, $page, [
+                'path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(),
+                'pageName' => $pageName,
+            ]);
+        });
     }
 
     /**
@@ -24,6 +57,29 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerQueryBuilderMacros()
     {
+        /**
+         * 让分页的时候不要用 count(*) 去统计总数
+         * 用 countColumns 的字段去统计
+         *
+         * @param int $perPage 每页数量
+         * @param string $countColumns 用于统计总数的列
+         * @param array $columns 返回的列
+         * @param string $pageName 页数字段名称
+         * @param int|null $page 页数
+         */
+        QueryBuilder::macro('countColumnPaginate', function ($perPage = 15, $countColumns = 'id', $columns = ['*'], $pageName = 'page', $page = null) {
+            $page = $page ?: \Illuminate\Pagination\Paginator::resolveCurrentPage($pageName);
+
+            $total = $this->getCountForPagination(\Illuminate\Support\Arr::wrap($countColumns));
+
+            $results = $total ? $this->forPage($page, $perPage)->get($columns) : collect();
+
+            return $this->paginator($results, $total, $perPage, $page, [
+                'path' => \Illuminate\Pagination\Paginator::resolveCurrentPath(),
+                'pageName' => $pageName,
+            ]);
+        });
+
         QueryBuilder::macro('unionSelect', function ($columns = ['*']) {
 
             /* @var \Illuminate\Database\Query\Builder $this */
