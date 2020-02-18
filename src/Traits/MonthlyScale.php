@@ -212,7 +212,7 @@ trait MonthlyScale
      * 获取某个月的 query
      *
      * @param \DateTime|string $yearMonth
-     * @return @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public static function queryForYearMonth($yearMonth)
     {

@@ -2,7 +2,6 @@
 
 namespace Luffluo\LaravelOrmSupport;
 
-use Illuminate\Support\Arr;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -128,16 +127,12 @@ class ServiceProvider extends BaseServiceProvider
                         foreach ($this->getQuery()->unions as $union) {
                             $union['query']->where($column, $operator, $value, $boolean);
                         }
-
-                        $this->addBinding(Arr::last($this->getQuery()->wheres)['value'] ?? null, 'union');
                     }
                 } else {
                     if ($this->unions) {
                         foreach ($this->unions as $union) {
                             $union['query']->where($column, $operator, $value, $boolean);
                         }
-
-                        $this->addBinding(Arr::last($this->wheres)['value'] ?? null, 'union');
                     }
                 }
 
@@ -157,8 +152,6 @@ class ServiceProvider extends BaseServiceProvider
                 foreach ($this->unions as $union) {
                     $union['query']->orWhere($column, $operator, $value);
                 }
-
-                $this->addBinding(Arr::last($this->wheres)['value'] ?? null, 'union');
             }
 
             return $this;
@@ -177,10 +170,6 @@ class ServiceProvider extends BaseServiceProvider
                 if ($this->unions) {
                     foreach ($this->unions as $union) {
                         $union['query']->whereIn($column, $values, $boolean, $not);
-                    }
-
-                    foreach ($values as $value) {
-                        $this->addBinding($value, 'union');
                     }
                 }
 
@@ -201,8 +190,6 @@ class ServiceProvider extends BaseServiceProvider
                     foreach ($this->unions as $union) {
                         $union['query']->whereBetween($column, $values, $boolean, $not);
                     }
-
-                    $this->addBinding($values, 'union');
                 }
 
                 return $this;
