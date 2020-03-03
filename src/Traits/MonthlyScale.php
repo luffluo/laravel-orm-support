@@ -7,6 +7,7 @@ use Luffluo\LaravelOrmSupport\Exceptions\InvalidArgumentException;
 
 /**
  * 按月分表
+ *
  * Trait MonthlyScale
  */
 trait MonthlyScale
@@ -55,6 +56,7 @@ trait MonthlyScale
      * 获取上几个月的表名
      *
      * @param int $months
+     *
      * @return string
      */
     public function getTableForLastMonths(int $months)
@@ -66,6 +68,7 @@ trait MonthlyScale
      * 通过特定的年月获取表名
      *
      * @param \DateTime|string $yearMonth
+     *
      * @return string
      */
     public function getTableForYearMonth($yearMonth)
@@ -99,6 +102,7 @@ trait MonthlyScale
      * 获取 上周 查询的 query
      *
      * @param int $weeks
+     *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public function newQueryForLastWeek(int $weeks = 1)
@@ -108,7 +112,9 @@ trait MonthlyScale
 
     /**
      * 获取 上几周 查询的 query
+     *
      * @param int $weeks
+     *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public function newQueryForLastWeeks(int $weeks)
@@ -121,6 +127,7 @@ trait MonthlyScale
      * 获取某个月的 query
      *
      * @param \DateTime|string $yearMonth
+     *
      * @return @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public function newQueryForYearMonth($yearMonth)
@@ -133,6 +140,7 @@ trait MonthlyScale
      *
      * @param \DateTime|string|int $start
      * @param \DateTime|string|int|null $end
+     *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public function newQueryForPeriod($start, $end = null)
@@ -144,6 +152,9 @@ trait MonthlyScale
         } else {
             $end = today();
         }
+
+        $start = $start->copy();
+        $end   = $end->copy();
 
         if ($end < $start) {
             throw new InvalidArgumentException('$start(' . $start . ') can\'t less then' . ' $end(' . $end . ')');
@@ -178,6 +189,7 @@ trait MonthlyScale
      * 获取 上周 查询的 query
      *
      * @param int $weeks
+     *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public static function queryForLastWeek(int $weeks = 1)
@@ -189,6 +201,7 @@ trait MonthlyScale
      * 获取 上几周 查询的 query
      *
      * @param int $weeks
+     *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public static function queryForLastWeeks(int $weeks)
@@ -201,6 +214,7 @@ trait MonthlyScale
      *
      * @param \DateTime|string|int $start
      * @param \DateTime|string|int|null $end
+     *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public static function queryForPeriod($start, $end = null)
@@ -212,6 +226,7 @@ trait MonthlyScale
      * 获取某个月的 query
      *
      * @param \DateTime|string $yearMonth
+     *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public static function queryForYearMonth($yearMonth)
