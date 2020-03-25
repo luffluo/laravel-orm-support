@@ -19,7 +19,7 @@ trait MonthlyScale
      */
     public function getTable()
     {
-        return $this->handleRawTable() . today()->format('Ym');
+        return rtrim(Str::finish($this->handleRawTable(),  today()->format('Ym') . '_'), '_');
     }
 
     /**
