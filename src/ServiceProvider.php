@@ -121,7 +121,7 @@ class ServiceProvider extends BaseServiceProvider
 
                 $this->where($column, $operator, $value, $boolean);
 
-                if ($this instanceof \Illuminate\Database\Eloquent\Builder) {
+                if ($this instanceof EloquentBuilder) {
 
                     if ($this->getQuery()->unions) {
                         foreach ($this->getQuery()->unions as $union) {
@@ -148,11 +148,21 @@ class ServiceProvider extends BaseServiceProvider
 
             $this->orWhere($column, $operator, $value);
 
-            if ($this->unions) {
-                foreach ($this->unions as $union) {
-                    $union['query']->orWhere($column, $operator, $value);
+            if ($this instanceof EloquentBuilder) {
+                if ($this->getQuery()->unions) {
+                    foreach ($this->getQuery()->unions as $union) {
+                        $union['query']->orWhere($column, $operator, $value);
+                    }
+                }
+            } else {
+
+                if ($this->unions) {
+                    foreach ($this->unions as $union) {
+                        $union['query']->orWhere($column, $operator, $value);
+                    }
                 }
             }
+
 
             return $this;
         });
