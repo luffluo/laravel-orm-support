@@ -61,7 +61,7 @@ trait MonthlyScale
      */
     public function getTableForLastMonths(int $months)
     {
-        return $this->handleRawTable() . today()->subMonths($months)->format('Ym');
+        return $this->handleRawTable() . today()->subMonthsNoOverflow($months)->format('Ym');
     }
 
     /**
@@ -166,7 +166,7 @@ trait MonthlyScale
             return $query;
         }
 
-        while (!$end->isSameMonth($start->addMonth(), true)) {
+        while (!$end->isSameMonth($start->addMonthNoOverflow(), true)) {
             $query->unionAll($this->newQuery()->from($this->getTableForYearMonth($start->copy()->format('Ym'))));
         }
 
