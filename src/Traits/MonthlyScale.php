@@ -160,17 +160,17 @@ trait MonthlyScale
             throw new InvalidArgumentException('$start(' . $start . ') can\'t less then' . ' $end(' . $end . ')');
         }
 
-        $query = $this->newQuery()->from($this->getTableForYearMonth($start->copy()->format('Ym')));
+        $query = $this->newQuery()->from($this->getTableForYearMonth($start->copy()->toDateTimeString()));
 
         if ($start->isSameMonth($end, true)) {
             return $query;
         }
 
         while (!$end->isSameMonth($start->addMonthNoOverflow(), true)) {
-            $query->unionAll($this->newQuery()->from($this->getTableForYearMonth($start->copy()->format('Ym'))));
+            $query->unionAll($this->newQuery()->from($this->getTableForYearMonth($start->copy()->toDateTimeString())));
         }
 
-        $query->unionAll($this->newQuery()->from($this->getTableForYearMonth($end->copy()->format('Ym'))));
+        $query->unionAll($this->newQuery()->from($this->getTableForYearMonth($end->copy()->toDateTimeString())));
 
         return $query;
     }
