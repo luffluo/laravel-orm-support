@@ -8,7 +8,7 @@
 ## Installing
 
 ```shell
-$ composer require luffluo/laravel-orm-support:^1.1.6 -vvv
+$ composer require luffluo/laravel-orm-support:~1.0 -vvv
 ```
 
 ## Usage
