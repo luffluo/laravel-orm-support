@@ -23,11 +23,21 @@ trait MonthlyScale
     }
 
     /**
-     * 获取 table 属性设置的表名
+     * @deprecated
      *
      * @return mixed
      */
     public function getShortTable()
+    {
+        return $this->getTableWithoutYearMonth();
+    }
+
+    /**
+     * 获取 table 不带 年月的
+     *
+     * @return mixed
+     */
+    public function getTableWithoutYearMonth()
     {
         return $this->table;
     }
