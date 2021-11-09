@@ -25,10 +25,9 @@ class ServiceProvider extends BaseServiceProvider
     {
         QueryBuilder::macro('unionSelect', function ($columns = ['*']) {
 
-            /* @var \Illuminate\Database\Query\Builder $this */
-
             $columns = is_array($columns) ? $columns : func_get_args();
 
+            /* @var \Illuminate\Database\Query\Builder $this */
             $this->select($columns);
 
             if ($this->unions) {
@@ -43,7 +42,6 @@ class ServiceProvider extends BaseServiceProvider
         QueryBuilder::macro('unionSelectRaw', function ($expression, array $bindings = []) {
 
             /* @var \Illuminate\Database\Query\Builder $this */
-
             $this->selectRaw($expression, $bindings);
 
             if ($this->unions) {
@@ -62,7 +60,6 @@ class ServiceProvider extends BaseServiceProvider
             function ($column, $operator = null, $value = null, $boolean = 'and') {
 
                 /* @var \Illuminate\Database\Eloquent\Builder $this */
-
                 $this->where($column, $operator, $value, $boolean);
 
                 if ($this instanceof EloquentBuilder) {
@@ -89,7 +86,6 @@ class ServiceProvider extends BaseServiceProvider
         EloquentBuilder::macro('unionOrWhere', function ($column, $operator = null, $value = null) {
 
             /* @var \Illuminate\Database\Eloquent\Builder $this */
-
             $this->orWhere($column, $operator, $value);
 
             if ($this instanceof EloquentBuilder) {
@@ -118,7 +114,6 @@ class ServiceProvider extends BaseServiceProvider
             function ($column, $values, $boolean = 'and', $not = false) {
 
                 /* @var \Illuminate\Database\Query\Builder $this */
-
                 $this->whereIn($column, $values, $boolean, $not);
 
                 if ($this->unions) {
@@ -137,7 +132,6 @@ class ServiceProvider extends BaseServiceProvider
             function ($column, array $values, $boolean = 'and', $not = false) {
 
                 /* @var \Illuminate\Database\Query\Builder $this */
-
                 $this->whereBetween($column, $values, $boolean, $not);
 
                 if ($this->unions) {
@@ -155,7 +149,6 @@ class ServiceProvider extends BaseServiceProvider
         QueryBuilder::macro('unionGroupBy', function (...$groups) {
 
             /* @var \Illuminate\Database\Eloquent\Builder $this */
-
             $this->groupBy($groups);
 
             if ($this->unions) {
