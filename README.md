@@ -74,9 +74,6 @@ class Model
 #### 查询当前月
 ```php
 Model::query()->count();
-
-// 上上周
-Model::queryForLastWeeks(2)->count();
 ```
 
 #### 查询上周的数据
